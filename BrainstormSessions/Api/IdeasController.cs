@@ -6,16 +6,19 @@ using BrainstormSessions.ClientModels;
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.Core.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace BrainstormSessions.Api
 {
     public class IdeasController : ControllerBase
     {
         private readonly IBrainstormSessionRepository _sessionRepository;
+        private readonly ILogger <IdeasController> _logger;
 
-        public IdeasController(IBrainstormSessionRepository sessionRepository)
+        public IdeasController(IBrainstormSessionRepository sessionRepository, ILogger<IdeasController> logger)
         {
             _sessionRepository = sessionRepository;
+            _logger = logger;
         }
 
         #region snippet_ForSessionAndCreate
@@ -25,6 +28,7 @@ namespace BrainstormSessions.Api
             var session = await _sessionRepository.GetByIdAsync(sessionId);
             if (session == null)
             {
+                _logger.LogError("Session not found");
                 return NotFound(sessionId);
             }
 
@@ -36,6 +40,7 @@ namespace BrainstormSessions.Api
                 DateCreated = idea.DateCreated
             }).ToList();
 
+            _logger.LogInformation("Session completed.");
             return Ok(result);
         }
 
@@ -44,12 +49,14 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogError("Model state is invalid.");
                 return BadRequest(ModelState);
             }
 
             var session = await _sessionRepository.GetByIdAsync(model.SessionId);
             if (session == null)
             {
+                _logger.LogError("Session not found");
                 return NotFound(model.SessionId);
             }
 
@@ -63,6 +70,7 @@ namespace BrainstormSessions.Api
 
             await _sessionRepository.UpdateAsync(session);
 
+            _logger.LogInformation("Session completed.");
             return Ok(session);
         }
         #endregion
@@ -77,6 +85,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                _logger.LogError("Session not found");
                 return NotFound(sessionId);
             }
 
@@ -88,6 +97,7 @@ namespace BrainstormSessions.Api
                 DateCreated = idea.DateCreated
             }).ToList();
 
+            _logger.LogInformation("Session completed.");
             return result;
         }
         #endregion
@@ -108,6 +118,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
+                _logger.LogError("Session not found");
                 return NotFound(model.SessionId);
             }
 
@@ -121,6 +132,7 @@ namespace BrainstormSessions.Api
 
             await _sessionRepository.UpdateAsync(session);
 
+            _logger.LogInformation("Session completed.");
             return CreatedAtAction(nameof(CreateActionResult), new { id = session.Id }, session);
         }
         #endregion
