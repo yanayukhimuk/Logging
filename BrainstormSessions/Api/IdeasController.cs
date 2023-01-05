@@ -111,6 +111,7 @@ namespace BrainstormSessions.Api
         {
             if (!ModelState.IsValid)
             {
+                _logger.LogError("Expected Error messages in the logs");
                 return BadRequest(ModelState);
             }
 
@@ -118,7 +119,7 @@ namespace BrainstormSessions.Api
 
             if (session == null)
             {
-                _logger.LogError("Session not found");
+                _logger.LogError("Expected Error messages in the logs");
                 return NotFound(model.SessionId);
             }
 

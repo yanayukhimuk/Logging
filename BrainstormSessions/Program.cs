@@ -13,7 +13,6 @@ namespace BrainstormSessions
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
-            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)
@@ -24,13 +23,13 @@ namespace BrainstormSessions
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
                 .Build();
 
-            var logger = new LoggerConfiguration()
+            Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             return Host.CreateDefaultBuilder(args)
-                .UseSerilog((logger))
+                .UseSerilog((Log.Logger))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

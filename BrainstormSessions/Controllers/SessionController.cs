@@ -2,16 +2,19 @@
 using BrainstormSessions.Core.Interfaces;
 using BrainstormSessions.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace BrainstormSessions.Controllers
 {
     public class SessionController : Controller
     {
         private readonly IBrainstormSessionRepository _sessionRepository;
+        private readonly ILogger<SessionController> _logger;
 
-        public SessionController(IBrainstormSessionRepository sessionRepository)
+        public SessionController(IBrainstormSessionRepository sessionRepository, ILogger<SessionController> logger)
         {
             _sessionRepository = sessionRepository;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index(int? id)
@@ -34,7 +37,7 @@ namespace BrainstormSessions.Controllers
                 Name = session.Name,
                 Id = session.Id
             };
-
+            _logger.LogDebug("Expected message");
             return View(viewModel);
         }
     }
