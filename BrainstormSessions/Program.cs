@@ -3,8 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
+using Serilog.Sinks.Email;
 using System;
 using System.IO;
+using System.Net;
+using System.Configuration;
 
 namespace BrainstormSessions
 {
@@ -23,13 +26,13 @@ namespace BrainstormSessions
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
                 .Build();
 
-            Log.Logger = new LoggerConfiguration()
+            var logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             return Host.CreateDefaultBuilder(args)
-                .UseSerilog((Log.Logger))
+                .UseSerilog((logger))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
